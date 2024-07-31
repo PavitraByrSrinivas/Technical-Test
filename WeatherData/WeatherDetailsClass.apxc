@@ -1,0 +1,62 @@
+public class WeatherDetailsClass {
+    
+    @AuraEnabled
+    public static WeatherInfo__c getWeather(Id recordId){
+        
+        Location__c loc = [Select Id,Name from Location__c where Id =: recordId ];
+        String cityName = loc.Name;
+        
+        //Creating the Endpoint URL
+        String apiKey = 'fa1c8e38f9d04614ae3a84c05f21e1b0'; 
+        String endpoint = 'http://api.openweathermap.org/data/2.5/weather';
+        endpoint += '?q='+cityName;
+        endpoint += '&units=metric';
+        endpoint += '&APPID='+apiKey;
+        system.debug('endPoint URL=> '+endpoint);
+        
+        //Callout to Weather API
+        Http http =new http();
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint(endpoint);
+        req.setMethod('GET');
+        HttpResponse res = http.send(req);
+        system.debug('response status=> '+res);
+        system.debug('response body=> '+JSON.deserializeUntyped(res.getBody()));
+        
+        //return the weather details
+        WeatherInfo__c weatherDet = new WeatherInfo__c();
+        if(res.getStatusCode() == 200){
+            Map<String,object> result = (Map<String,Object>)JSON.deserializeUntyped(res.getBody());
+            weatherDet.Name = String.valueOf(result.get('name'));
+            Map<String,object> mainResult = (Map<String,object>)(result.get('main'));
+            weatherDet.Temperature__c = String.valueOf(mainResult.get('temp'));
+            weatherDet.Pressure__c = String.valueOf(mainResult.get('pressure'));
+            weatherDet.Humidity__c = String.valueOf(mainResult.get('humidity'));
+            weatherDet.Minimum_Temp__c = String.valueOf(mainResult.get('temp_min'));
+            weatherDet.Maximum_Temp__c = String.valueOf(mainResult.get('temp_max'));
+        }else {
+           system.debug('Unable to fetch details from API! ');
+        }
+        
+        
+        if(weatherDet != null){
+            List<WeatherInfo__c> weatInfo = [Select Id,Name,Temperature__c,Pressure__c,Humidity__c,Minimum_Temp__c,Maximum_Temp__c
+                                             from WeatherInfo__c where Name =: weatherDet.Name limit 1];
+            
+            if(weatInfo.size() > 0){
+                for(WeatherInfo__c w : weatInfo){
+                    w.Temperature__c = weatherDet.Temperature__c;
+                    w.Pressure__c = weatherDet.Pressure__c;
+                    w.Humidity__c = weatherDet.Humidity__c;
+                    w.Minimum_Temp__c = weatherDet.Minimum_Temp__c;
+                    w.Maximum_Temp__c = weatherDet.Maximum_Temp__c;
+                }
+                update weatInfo;
+             }else{
+                insert weatherDet;  
+             }
+        }
+        
+        return weatherDet;
+    }
+}

@@ -1,0 +1,37 @@
+<template>
+    <lightning-card title="Task Manager" icon-name="standard:task">
+        <div class="styling">
+                        
+            <template if:true={taskData}>
+                <ul>
+                    <template for:each={taskData} for:item="task">
+                        <li key={task.Id}>
+                            <p>Subject: {task.Subject}</p>
+                            <p>Due Date: {task.ActivityDate}</p>
+                            <p>
+                                <lightning-combobox
+                                    label='Status:'
+                                    value={task.Status}
+                                    data-id={task.Id}
+                                    options={statusOptions}
+                                    onchange={handleStatusChange}>
+                                </lightning-combobox>
+                            </p>
+                            <p class="spacing"></p>
+                            <button onclick={markAsCompleted} data-id={task.Id}>Mark as Completed</button>
+                            <p class="spacing"></p>
+                            <p class="spacing"></p>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template if:true={tasks.error}>
+                <p>Error loading tasks.</p>
+            </template>
+
+            <lightning-button label="New Task" onclick={openModal}></lightning-button>
+            <c-new-task-modal show-modal={isModalOpen} onclose={closeModal} onsuccess={refreshTaskList}></c-new-task-modal>
+
+	    </div>
+    </lightning-card>
+</template>

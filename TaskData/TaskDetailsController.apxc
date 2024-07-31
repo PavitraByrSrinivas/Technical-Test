@@ -1,0 +1,29 @@
+public class TaskDetailsController {
+    
+    //Fetch the tasks related to the loggedin user
+    @AuraEnabled(cacheable=true)
+    public static List<Task> getTasks() {
+        List<Task> tasks = new List<Task>();
+        tasks = [SELECT Id, Subject, Status, Priority, ActivityDate FROM Task 
+                 WHERE OwnerId = :UserInfo.getUserId() ORDER BY Priority ASC];
+        system.debug('tasks-->'+tasks);
+        return tasks;
+    }
+    
+    //Create tasks
+    @AuraEnabled
+    public static void createTask(String subject, Date dueDate, String priority) {
+        Task t = new Task(OwnerId = UserInfo.getUserId(), Subject = subject, 
+                          ActivityDate = dueDate, Priority = priority, Status = 'Not Started');
+        insert t;
+    }
+
+    //Update task status
+    @AuraEnabled
+    public static void updateTaskStatus(Id taskId, String status) {
+        Task t = [SELECT Id, Status FROM Task WHERE Id = :taskId LIMIT 1];
+        t.Status = status;
+        update t;
+    } 
+
+}

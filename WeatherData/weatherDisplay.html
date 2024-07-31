@@ -1,0 +1,34 @@
+<template>
+    <lightning-card title="Weather Information Center" variant="narrow" icon-name="utility:world">
+            
+<!-- Display Weather Details -->			
+<template lwc:if={showWeatherDetails}>
+<div class="c-container">
+<lightning-layout horizontal-align="spread" multiple-rows>
+    <lightning-layout-item padding="around-small" size="12">
+       <span class="centerStyle slds-text-title_bold"> {weatherDetails.Name} </span>
+    </lightning-layout-item>
+    <lightning-layout-item padding="around-small" size="6">
+                    <span > Temperature : {weatherDetails.Temperature__c} </span>
+    </lightning-layout-item>				
+    <lightning-layout-item padding="around-small" size="6">
+       <span > Pressure : {weatherDetails.Pressure__c} </span>
+    </lightning-layout-item>
+    <lightning-layout-item padding="around-small" size="6">
+                    <span > Humidity : {weatherDetails.Humidity__c} </span>
+    </lightning-layout-item>
+    <lightning-layout-item padding="around-small" size="6">
+                    <span class="minColor"> Min Temp : {weatherDetails.Minimum_Temp__c} </span>
+    </lightning-layout-item>
+            <lightning-layout-item padding="around-small" size="6">
+                    <span class="maxColor"> Max Temp : {weatherDetails.Maximum_Temp__c} </span>
+    </lightning-layout-item>
+        </lightning-layout>
+
+</div>
+</template>
+
+
+</lightning-card>
+    
+</template>
