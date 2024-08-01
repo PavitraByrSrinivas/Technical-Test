@@ -1,9 +1,18 @@
 <template>
     <lightning-card title="Task Manager" icon-name="standard:task">
-        <div class="styling">
+				
+		<lightning-button class="floatRight" label="New Task" onclick={openModal}></lightning-button>
+            <template lwc:if={isModalOpen}>
+              <div lwc:ref="createTask" >
+            		<c-new-task-modal  onclose={closeModal} onsuccess={refreshTaskList}></c-new-task-modal>
+              </div>
+ 		</template>
+				
+        <div class="styling">												
                         
             <template if:true={taskData}>
                 <ul>
+										<p class="spacing"></p>
                     <template for:each={taskData} for:item="task">
                         <li key={task.Id}>
                             <p>Subject: {task.Subject}</p>
@@ -29,9 +38,7 @@
                 <p>Error loading tasks.</p>
             </template>
 
-            <lightning-button label="New Task" onclick={openModal}></lightning-button>
-            <c-new-task-modal show-modal={isModalOpen} onclose={closeModal} onsuccess={refreshTaskList}></c-new-task-modal>
-
+           
 	    </div>
     </lightning-card>
 </template>
