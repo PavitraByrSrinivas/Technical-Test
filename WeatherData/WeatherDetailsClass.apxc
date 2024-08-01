@@ -7,8 +7,8 @@ public class WeatherDetailsClass {
         String cityName = loc.Name;
         
         //Creating the Endpoint URL
-        String apiKey = 'fa1c8e38f9d04614ae3a84c05f21e1b0'; 
-        String endpoint = 'http://api.openweathermap.org/data/2.5/weather';
+        String apiKey = System.Label.OpenWeatherMapAPI; 
+        String endpoint = System.Label.OpenWeatherMapEndpoint;
         endpoint += '?q='+cityName;
         endpoint += '&units=metric';
         endpoint += '&APPID='+apiKey;
